@@ -66,15 +66,18 @@ router.put('/:id', async (req, res) => {
     console.log(post)
     if (!post.title || !post.contents) {
         res.status(400).json({ message: "Please provide title and contents for the post" })
-    } try {
-        const postId = await Post.update(id, post)
-        if(!postId){
-            res.status(404).json({ message: "The post with the specified ID does not exist" })
+    } else {
+        try {
+            const postId = await Post.update(id, post)
+            if(!postId){
+                res.status(404).json({ message: "The post with the specified ID does not exist" })
+            } else {
+                const newPost = await Post.findById(postId)
+                res.status(200).json(newPost)
+            }
+        } catch (err) {
+            res.status(404).json({ message: err.message })
         }
-        const newPost = await Post.findById(postId)
-        res.status(200).json(newPost)
-    } catch (err) {
-        res.status(404).json({ message: err.message })
     }
 })
 
@@ -136,7 +139,7 @@ router.get('/:id/comments', (req, res) => {
                 res.status(404).json({ message: "The post with the specified ID does not exist" })
             }
         })
-        .catch(err => {
+        .catch(() => {
             res.status(500).json({ message: "The comments information could not be retrieved" })
         })
 })
