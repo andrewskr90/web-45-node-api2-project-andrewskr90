@@ -79,35 +79,34 @@ router.put('/:id', async (req, res) => {
 })
 
 router.delete('/:id', async (req, res) => {
-    // const { id } = req.params
+    const { id } = req.params
+    try {
+        const postToDelete = await Post.findById(id)
+        if (postToDelete) {
+            await Post.remove(id)
+            console.log(postToDelete)
+            res.status(200).json(postToDelete)
+        } else {
+            res.status(404).json({ message: "The post with the specified ID does not exist" })
+        } 
+    } catch (err) {
+        res.status(500).json({ message: "The post could not be removed" })
+    }
+    // const { id } = req.params;
 
-    // try {
-    //     const findId = await Post.findById(id)
-    //     const deletedPost = await Post.remove(id)
-    //     if (!findId) {
-    //         res.status(404).json({ message: "The post with the specified ID does not exist" })
-    //     }
-    //     else if (deletedPost) {
-    //         res.status(200).json(deletedPost)
-    //     } 
-    // } catch (err) {
-    //     res.status(500).json({ message: "The post could not be removed" })
-    // }
-    const { id } = req.params;
-
-  Post.remove(id)
-    .then((deleted) => {
-      if (deleted === 1) {
-        res.status(200).json({ message: "The post has been deleted" });
-      } else {
-        res
-          .status(404)
-          .json({ message: "The post with the specified ID does not exist" });
-      }
-    })
-    .catch((err) => {
-      res.status(500).json({ message: "The post could not be removed" });
-    });
+//   Post.remove(id)
+//     .then((deleted) => {
+//       if (deleted === 1) {
+//         res.status(200).json();
+//       } else {
+//         res
+//           .status(404)
+//           .json({ message: "The post with the specified ID does not exist" });
+//       }
+//     })
+//     .catch((err) => {
+//       res.status(500).json({ message: "The post could not be removed" });
+//     });
 })
 
 router.get('/:id/comments', (req, res) => {
