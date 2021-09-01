@@ -79,20 +79,36 @@ router.put('/:id', async (req, res) => {
 })
 
 router.delete('/:id', async (req, res) => {
-    const { id } = req.params
-    try {
-        const postToDelete = await Post.findById(id)
-        if (postToDelete) {
-            await Post.remove(id)
-            console.log(postToDelete)
+
+    const postToDelete = await Post.findById(req.params.id)
+    if (postToDelete) {
+        const deletePost = await Post.remove(req.params.id)
+        if (deletePost === 1) {
             res.status(200).json(postToDelete)
         } else {
-            res.status(404).json({ message: "The post with the specified ID does not exist" })
-        } 
-    } catch (err) {
-        res.status(500).json({ message: "The post could not be removed" })
+            res.status(500).json({ message: "The post could not be removed" })
+        }
+    } else {
+        res.status(404).json({ message: "The post with the specified ID does not exist" })
     }
-    // const { id } = req.params;
+
+
+    // try {
+    //     const postToDelete = await Post.findById(id)
+    //     if (postToDelete) {
+    //         const deletedPost = await Post.remove(id)
+    //         if (deletedPost === 1) {
+    //             console.log(postToDelete)
+    //             res.status(200).json(postToDelete)
+    //         }
+    //     } else {
+    //         res.status(404).json({ message: "The post with the specified ID does not exist" })
+    //     } 
+    // } catch (err) {
+    //     res.status(500).json({ message: "The post could not be removed" })
+    // }
+
+// const { id } = req.params;
 
 //   Post.remove(id)
 //     .then((deleted) => {
@@ -110,6 +126,7 @@ router.delete('/:id', async (req, res) => {
 })
 
 router.get('/:id/comments', (req, res) => {
+    
     const { id } = req.params
     Post.findPostComments(id)
         .then(comments => {
